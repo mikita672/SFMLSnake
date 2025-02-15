@@ -3,13 +3,15 @@
 #include <SFML/Graphics.hpp>
 #include <cmath>
 #include <ctime>
+#include <iostream>
+#include <ostream>
 
 int main() {
   std::srand(time(NULL));
 
   sf::Clock clock;
 
-  Snake m_player("Resources/Sprites/Snake/Full_snake32.png");
+  Snake m_player("Resources/Sprites/Snake");
   Map m_map("Resources/Sprites/Map/Full_map_32.png",
             "Resources/Sprites/Map/Full_map_32.png");
   sf::RenderWindow window(sf::VideoMode(512, 512), "SNAKE!");
@@ -21,11 +23,8 @@ int main() {
     }
 
     window.clear();
-
     m_map.drawMap(&window);
-    m_player.snakeMovement(&clock);
-    m_player.updateSnakeDirection();
-    m_player.snakeRender(&window);
+    m_map.run(&clock, &window, &m_player);
 
     window.display();
   }
