@@ -86,8 +86,10 @@ void Snake::snakeMovement(sf::Clock *clock) {
 
     snakeBody.insert(snakeBody.begin(),
                      snakeTile(newHead.x, newHead.y, snakeDirection));
-
-    snakeBody.pop_back();
+    if (!this->increase) {
+      snakeBody.pop_back();
+    }
+    this->increase = false;
 
     clock->restart();
   }
@@ -182,3 +184,5 @@ sf::Vector2i Snake::getHeadPos() {
 }
 
 std::vector<snakeTile> Snake::getEntireSnakePos() { return this->snakeBody; }
+
+void Snake::increaseSize() { this->increase = true; }

@@ -42,6 +42,7 @@ void Map::checkAppleColission(Snake *player) {
   if (this->getApplePos() == player->getHeadPos()) {
     apple_posX = rand() % 16;
     apple_posY = rand() % 16;
+    player->increaseSize();
   }
 }
 

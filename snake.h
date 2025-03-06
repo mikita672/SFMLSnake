@@ -51,6 +51,7 @@ private:
 
   direction prevDir;
   bool posChanged = false;
+  bool increase = false;
 
 public:
   Snake(std::string path);
@@ -59,6 +60,7 @@ public:
   void snakeRender(sf::RenderWindow *window, sf::Clock *clock);
   sf::Vector2i getHeadPos();
   std::vector<snakeTile> getEntireSnakePos();
+  void increaseSize();
 };
 
 #endif
