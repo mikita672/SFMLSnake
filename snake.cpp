@@ -23,9 +23,9 @@ Snake::Snake(std::string path) {
   snakeTailSprite.setTexture(snakeTailTexture);
   snakeLinkSprite.setTexture(snakeLinkTexture);
 
-  snakeBody.push_back(snakeTile(5, 5, UP)); // head
-  snakeBody.push_back(snakeTile(5, 6, UP)); // body
-  snakeBody.push_back(snakeTile(5, 7, UP)); // tail
+  snakeBody.push_back(snakeTile(5, 5, UP)); // hhead
+  snakeBody.push_back(snakeTile(5, 6, UP)); //  body
+  snakeBody.push_back(snakeTile(5, 7, UP)); //  tail
   gameRunning = false;
 }
 
