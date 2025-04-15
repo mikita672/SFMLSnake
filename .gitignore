@@ -2,6 +2,7 @@
 # Ten plik .gitignore został utworzony automatycznie przez Microsoft(R) Visual Studio.
 ################################################################################
 
+/x64/Debug/SFMLSnake.exe
 /.vs
 /SfmlTest/x64/Debug
 /x64/Debug
