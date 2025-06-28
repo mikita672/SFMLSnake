@@ -1,4 +1,4 @@
-#include <SFML/Graphics.hpp>
+﻿#include <SFML/Graphics.hpp>
 #include <iostream>
 #include "snake.h"
 
@@ -89,7 +89,29 @@ void Snake::snakeMovement(sf::Clock* clock) {
         if (!this->increase) {
             snakeBody.pop_back();
         }
-        this->increase = false;
+        else {
+            this->increase = false;
+        }
+
+        for (size_t i = 1; i < snakeBody.size(); i++) {
+            sf::Vector2i prevPos = snakeBody[i - 1].getPosition();
+            sf::Vector2i currentPos = snakeBody[i].getPosition();
+
+            int dx = prevPos.x - currentPos.x;
+            int dy = prevPos.y - currentPos.y;
+
+            if (dx > 1) dx = -1;
+            else if (dx < -1) dx = 1;
+            if (dy > 1) dy = -1;
+            else if (dy < -1) dy = 1;
+
+            if (dx == 1) snakeBody[i].setDirection(RIGHT);
+            else if (dx == -1) snakeBody[i].setDirection(LEFT);
+            else if (dy == 1) snakeBody[i].setDirection(DOWN);
+            else if (dy == -1) snakeBody[i].setDirection(UP);
+        }
+
+        snakeBody[0].setDirection(snakeDirection);
 
         clock->restart();
     }
@@ -112,65 +134,61 @@ void Snake::snakeRender(sf::RenderWindow* window, sf::Clock* clock) {
     window->draw(snakeHeadSprite);
 
     for (size_t i = 1; i < snakeBody.size() - 1; i++) {
+        sf::Vector2i prevPos = snakeBody[i - 1].getPosition();
+        sf::Vector2i currentPos = snakeBody[i].getPosition();
+        sf::Vector2i nextPos = snakeBody[i + 1].getPosition();
 
-        if ((snakeBody[i - 1].getDirection() == RIGHT &&
-            snakeBody[i + 1].getDirection() == UP) ||
-            (snakeBody[i - 1].getDirection() == DOWN &&
-                snakeBody[i + 1].getDirection() == LEFT)) {
-            snakeLinkSprite.setPosition(sf::Vector2f(snakeBody[i].getPosition().x * 32,
-                snakeBody[i].getPosition().y * 32));
-            snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 32), sf::Vector2i(32, 32)));
-            window->draw(snakeLinkSprite);
-        }
-        else if ((snakeBody[i - 1].getDirection() == LEFT &&
-            snakeBody[i + 1].getDirection() == UP) ||
-            (snakeBody[i - 1].getDirection() == DOWN &&
-                snakeBody[i + 1].getDirection() == RIGHT)) {
-            snakeLinkSprite.setPosition(sf::Vector2f(snakeBody[i].getPosition().x * 32,
-                snakeBody[i].getPosition().y * 32));
-            snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 64), sf::Vector2i(32, 32)));
-            window->draw(snakeLinkSprite);
-        }
-        else if ((snakeBody[i + 1].getDirection() == LEFT &&
-            snakeBody[i - 1].getDirection() == UP) ||
-            (snakeBody[i + 1].getDirection() == DOWN &&
-                snakeBody[i - 1].getDirection() == RIGHT)) {
-            snakeLinkSprite.setPosition(sf::Vector2f(snakeBody[i].getPosition().x * 32,
-                snakeBody[i].getPosition().y * 32));
-            snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
-            window->draw(snakeLinkSprite);
-        }
-        else if ((snakeBody[i + 1].getDirection() == RIGHT &&
-            snakeBody[i - 1].getDirection() == UP) ||
-            (snakeBody[i + 1].getDirection() == DOWN &&
-                snakeBody[i - 1].getDirection() == LEFT)) {
-            snakeLinkSprite.setPosition(sf::Vector2f(snakeBody[i].getPosition().x * 32,
-                snakeBody[i].getPosition().y * 32));
-            snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 96), sf::Vector2i(32, 32)));
-            window->draw(snakeLinkSprite);
+        int dx_prev = prevPos.x - currentPos.x;
+        int dy_prev = prevPos.y - currentPos.y;
+        int dx_next = nextPos.x - currentPos.x;
+        int dy_next = nextPos.y - currentPos.y;
 
+        if (dx_prev > 1) dx_prev = -1; else if (dx_prev < -1) dx_prev = 1;
+        if (dy_prev > 1) dy_prev = -1; else if (dy_prev < -1) dy_prev = 1;
+        if (dx_next > 1) dx_next = -1; else if (dx_next < -1) dx_next = 1;
+        if (dy_next > 1) dy_next = -1; else if (dy_next < -1) dy_next = 1;
+
+        bool isCorner = (dx_prev * dy_next != dy_prev * dx_next);
+
+        if (isCorner) {
+            snakeLinkSprite.setPosition(sf::Vector2f(
+                snakeBody[i].getPosition().x * 32,
+                snakeBody[i].getPosition().y * 32
+            ));
+
+            if ((dx_prev == 1 && dy_next == -1) || (dy_prev == 1 && dx_next == -1)) {
+                snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
+            }
+            else if ((dx_prev == 1 && dy_next == 1) || (dy_prev == -1 && dx_next == -1)) {
+                snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 32), sf::Vector2i(32, 32)));
+            }
+            else if ((dx_prev == -1 && dy_next == 1) || (dy_prev == -1 && dx_next == 1)) {
+                snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 64), sf::Vector2i(32, 32)));
+            }
+            else if ((dx_prev == -1 && dy_next == -1) || (dy_prev == 1 && dx_next == 1)) {
+                snakeLinkSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 96), sf::Vector2i(32, 32)));
+            }
+
+            window->draw(snakeLinkSprite);
         }
         else {
+            snakeBodySprite.setPosition(sf::Vector2f(
+                snakeBody[i].getPosition().x * 32,
+                snakeBody[i].getPosition().y * 32
+            ));
 
-            snakeBodySprite.setPosition(sf::Vector2f(snakeBody[i].getPosition().x * 32,
-                snakeBody[i].getPosition().y * 32));
-
-            if (snakeBody[i].getDirection() == DOWN) {
-                snakeBodySprite.setTextureRect(sf::Rect(sf::Vector2i(0, 96), sf::Vector2i(32, 32)));
-            }
-            else if (snakeBody[i].getDirection() == RIGHT) {
-                snakeBodySprite.setTextureRect(sf::Rect(sf::Vector2i(0, 32), sf::Vector2i(32, 32)));
-            }
-            else if (snakeBody[i].getDirection() == UP) {
+            if (dx_prev == 0) {
                 snakeBodySprite.setTextureRect(sf::Rect(sf::Vector2i(0, 0), sf::Vector2i(32, 32)));
             }
-            else if (snakeBody[i].getDirection() == LEFT) {
-                snakeBodySprite.setTextureRect(sf::Rect(sf::Vector2i(0, 64), sf::Vector2i(32, 32)));
+            else {
+                snakeBodySprite.setTextureRect(sf::Rect(sf::Vector2i(0, 32), sf::Vector2i(32, 32)));
             }
 
             window->draw(snakeBodySprite);
         }
+    }
 
+    if (snakeBody.size() > 1) {
         snakeTailSprite.setPosition(sf::Vector2f(snakeBody.back().getPosition().x * 32,
             snakeBody.back().getPosition().y * 32));
         if (snakeBody.back().getDirection() == DOWN) {
@@ -185,10 +203,8 @@ void Snake::snakeRender(sf::RenderWindow* window, sf::Clock* clock) {
         else if (snakeBody.back().getDirection() == LEFT) {
             snakeTailSprite.setTextureRect(sf::Rect(sf::Vector2i(0, 64), sf::Vector2i(32, 32)));
         }
-        snakeTailSprite.setOrigin(sf::Vector2f(0, 0));
         window->draw(snakeTailSprite);
-        snakeBody.back().setDirection(
-            snakeBody[snakeBody.size() - 2].getDirection());
+       
     }
 }
 
