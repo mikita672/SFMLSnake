@@ -216,3 +216,14 @@ sf::Vector2i Snake::getHeadPos() {
 std::vector<snakeTile> Snake::getEntireSnakePos() { return this->snakeBody; }
 
 void Snake::increaseSize() { this->increase = true; }
+
+int Snake::checkCollision() {
+	sf::Vector2i headPos = snakeBody[0].getPosition();
+
+	for (size_t i = 1; i < snakeBody.size(); i++) {
+		if (snakeBody[i].getPosition() == headPos) {
+			return 1;
+		}
+	}
+	return 0;
+}

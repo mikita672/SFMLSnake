@@ -56,4 +56,5 @@ public:
     sf::Vector2i getHeadPos();
     std::vector<snakeTile> getEntireSnakePos();
     void increaseSize();
+    int checkCollision();
 };
