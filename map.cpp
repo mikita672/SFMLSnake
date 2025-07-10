@@ -59,14 +59,13 @@ sf::Vector2i Map::getApplePos() { return sf::Vector2i(apple_posX, apple_posY); }
 
 void Map::run(sf::Clock* clock, sf::RenderWindow* window, Snake* player) {
     this->checkAppleColission(player);
-    std::cout << "Apple pos: (" << this->getApplePos().x << ", "
-        << this->getApplePos().y << "), Snake pos: ("
-        << player->getHeadPos().x << ", " << player->getHeadPos().y << ")"
-        << std::endl;
     this->renderApple(window, player->getEntireSnakePos());
     player->snakeMovement(clock);
     player->updateSnakeDirection();
     player->snakeRender(window, clock);
+    if (player->checkCollision()) {
+        player->changeGameState();
+    }
 }
 
 void Map::renderApple(sf::RenderWindow* window, std::vector<snakeTile> snake) {

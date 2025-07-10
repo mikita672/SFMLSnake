@@ -227,3 +227,7 @@ int Snake::checkCollision() {
 	}
 	return 0;
 }
+
+void Snake::changeGameState() {
+	gameRunning = false;
+}

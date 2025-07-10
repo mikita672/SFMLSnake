@@ -57,4 +57,5 @@ public:
     std::vector<snakeTile> getEntireSnakePos();
     void increaseSize();
     int checkCollision();
+    void changeGameState();
 };
